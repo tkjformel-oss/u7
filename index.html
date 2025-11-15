@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SMA Technova - Beranda</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      min-height: 100vh;
+    }
+    
+    /* Loading Screen */
+    #loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+    
+    #loading-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    .loader {
+      width: 60px;
+      height: 60px;
+      border: 5px solid rgba(255, 255, 255, 0.3);
+      border-top: 5px solid white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .loading-text {
+      color: white;
+      font-size: 18px;
+      font-weight: 600;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    /* Header Styles */
+    header {
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      padding: 15px 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .logo h1 {
+      font-size: 24px;
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 700;
+    }
+    
+    .logo-icon {
+      font-size: 35px;
+    }
+    
+    /* Hamburger Menu */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+      padding: 5px;
+    }
+    
+    .hamburger span {
+      width: 25px;
+      height: 3px;
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      margin: 3px 0;
+      border-radius: 3px;
+      transition: all 0.3s ease;
+    }
+    
+    .hamburger.active span:nth-child(1) {
+      transform: rotate(45deg) translate(8px, 8px);
+    }
+    
+    .hamburger.active span:nth-child(2) {
+      opacity: 0;
+    }
+    
+    .hamburger.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(7px, -6px);
+    }
+    
+    /* Navigation */
+    nav {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    
+    nav a {
+      color: #333;
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    
+    nav a:hover, nav a.active {
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(30, 60, 114, 0.4);
+    }
+    
+    /* Main Content */
+    main {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+    
+    /* Hero Section */
+    .hero {
+      background: white;
+      border-radius: 20px;
+      padding: 40px 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    
+    .hero h2 {
+      font-size: 36px;
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 15px;
+    }
+    
+    .hero p {
+      font-size: 16px;
+      color: #666;
+      line-height: 1.8;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    /* Cards Container */
+    .cards-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+      margin-bottom: 30px;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 50px rgba(30, 60, 114, 0.3);
+    }
+    
+    .card-icon {
+      font-size: 45px;
+      margin-bottom: 15px;
+    }
+    
+    .card h3 {
+      color: #333;
+      font-size: 22px;
+      margin-bottom: 15px;
+    }
+    
+    .card p, .card ol, .card ul {
+      color: #666;
+      line-height: 1.8;
+      font-size: 15px;
+    }
+    
+    .card ol, .card ul {
+      text-align: left;
+      padding-left: 20px;
+    }
+    
+    .card ol li, .card ul li {
+      margin-bottom: 10px;
+    }
+    
+    /* Quote Style */
+    blockquote {
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      color: white;
+      padding: 25px;
+      border-radius: 15px;
+      font-size: 18px;
+      font-style: italic;
+      margin: 15px 0;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(30, 60, 114, 0.3);
+    }
+    
+    /* Footer */
+    footer {
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(10px);
+      padding: 25px;
+      text-align: center;
+      margin-top: 50px;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    footer p {
+      color: #666;
+      font-size: 15px;
+    }
+    
+    .motto {
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 700;
+      font-size: 16px;
+      margin-top: 8px;
+    }
+    
+    /* Table Styles */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    }
+    
+    th {
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      color: white;
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 15px;
+    }
+    
+    td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #f0f0f0;
+      color: #333;
+      font-size: 14px;
+    }
+    
+    tr:hover {
+      background: #f8f9ff;
+    }
+    
+    /* Image Gallery for Guru Page */
+    .image-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+      margin-bottom: 30px;
+    }
+    
+    .image-card {
+      background: white;
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    
+    .image-card h3 {
+      color: #333;
+      margin-bottom: 15px;
+      font-size: 20px;
+    }
+    
+    .image-card img {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+      border-radius: 15px;
+      margin-bottom: 15px;
+      transition: transform 0.3s ease;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .image-card img:hover {
+      transform: scale(1.02);
+    }
+    
+    .upload-text {
+      font-size: 15px;
+      color: #666;
+      font-weight: 500;
+    }
+    
+    /* Program Cards */
+    .program-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 25px;
+    }
+    
+    .program-card {
+      background: white;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .program-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(30, 60, 114, 0.3);
+    }
+    
+    .program-card h4 {
+      color: #1e3c72;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+    
+    .program-card p {
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+    
+    .program-card .teacher {
+      color: #2a5298;
+      font-weight: 600;
+      font-size: 13px;
+    }
+    
+    /* Student List */
+    .student-section {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 25px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    }
+    
+    .student-section h3 {
+      color: #1e3c72;
+      font-size: 24px;
+      margin-bottom: 15px;
+    }
+    
+    .student-section h4 {
+      color: #2a5298;
+      font-size: 18px;
+      margin: 20px 0 12px 0;
+    }
+    
+    .student-section ol {
+      columns: 3;
+      column-gap: 25px;
+    }
+    
+    .student-section li {
+      color: #666;
+      margin-bottom: 8px;
+      break-inside: avoid;
+      font-size: 14px;
+    }
+    
+    /* Summary Table */
+    .summary-table {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 0;
+      }
+      
+      .hamburger {
+        display: flex;
+      }
+      
+      nav {
+        position: fixed;
+        top: 70px;
+        left: -100%;
+        width: 100%;
+        background: white;
+        flex-direction: column;
+        padding: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        transition: left 0.3s ease;
+        z-index: 999;
+      }
+      
+      nav.active {
+        left: 0;
+      }
+      
+      nav a {
+        width: 100%;
+        text-align: center;
+        padding: 12px 20px;
+        margin: 5px 0;
+      }
+      
+      .logo h1 {
+        font-size: 20px;
+      }
+      
+      nav a {
+        font-size: 13px;
+        padding: 8px 12px;
+      }
+      
+      .hero {
+        padding: 30px 20px;
+      }
+      
+      .hero h2 {
+        font-size: 28px;
+      }
+      
+      .hero p {
+        font-size: 15px;
+      }
+      
+      .cards-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .card {
+        padding: 25px;
+      }
+      
+      .student-section ol {
+        columns: 1;
+      }
+      
+      .image-gallery {
+        grid-template-columns: 1fr;
+      }
+      
+      .image-card img {
+        height: 200px;
+      }
+      
+      .program-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      blockquote {
+        font-size: 16px;
+        padding: 20px;
+      }
+      
+      table {
+        font-size: 13px;
+      }
+      
+      th, td {
+        padding: 10px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      main {
+        padding: 0 15px;
+      }
+      
+      .hero h2 {
+        font-size: 24px;
+      }
+      
+      .card-icon {
+        font-size: 40px;
+      }
+      
+      .card h3 {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading Screen -->
+  <div id="loading-screen">
+    <div class="loader"></div>
+    <div class="loading-text">Memuat SMA Technova...</div>
+  </div>
+
+  <header>
+    <div class="header-content">
+      <div class="logo">
+        <span class="logo-icon">🏫</span>
+        <h1>SMA TECHNOVA</h1>
+      </div>
+      
+      <!-- Hamburger Menu -->
+      <div class="hamburger" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      
+      <nav id="nav-menu">
+        <a href="#" class="active" onclick="showPage('index')">Beranda</a>
+        <a href="#" onclick="showPage('program')">Program</a>
+        <a href="#" onclick="showPage('guru')">Guru & Staf</a>
+        <a href="#" onclick="showPage('murid')">Murid</a>
+        <a href="#" onclick="showPage('tabel')">Tabel</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- INDEX PAGE -->
+    <div id="page-index" class="page-content">
+      <div class="hero">
+        <h2>🏫 Selamat Datang di SMA Technova</h2>
+        <p>Sekolah unggulan yang mencetak generasi kreatif, berkarakter, dan berjiwa inovator di era digital</p>
+      </div>
+
+      <div class="cards-container">
+        <div class="card">
+          <div class="card-icon">🕰️</div>
+          <h3>Sejarah Singkat</h3>
+          <p>SMA Technova berdiri pada tahun <strong>2012</strong> di bawah naungan Yayasan Teknologi Nusantara. Awalnya sekolah ini hanya memiliki dua ruang kelas dan satu laboratorium komputer sederhana.</p>
+          <p>Seiring perkembangan zaman dan meningkatnya minat siswa terhadap dunia teknologi, Technova berkembang menjadi salah satu sekolah unggulan di bidang teknologi terapan, sains, dan kreativitas digital.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon">🎯</div>
+          <h3>Visi</h3>
+          <blockquote>"Menjadi sekolah unggulan yang mencetak generasi kreatif, berkarakter, dan berjiwa inovator di era digital."</blockquote>
+        </div>
+
+        <div class="card">
+          <div class="card-icon">💡</div>
+          <h3>Misi</h3>
+          <ol>
+            <li>Mengembangkan pembelajaran berbasis teknologi dan inovasi</li>
+            <li>Menanamkan nilai karakter, disiplin, dan tanggung jawab sosial</li>
+            <li>Mendorong kolaborasi antar siswa dalam proyek nyata</li>
+            <li>Membekali siswa dengan keterampilan abad 21</li>
+            <li>Menghasilkan lulusan yang siap bersaing di dunia global</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROGRAM PAGE -->
+    <div id="page-program" class="page-content" style="display:none;">
+      <div class="hero">
+        <h2>🧩 Program Unggulan</h2>
+        <p>Program inovatif untuk mengembangkan potensi siswa di berbagai bidang</p>
+      </div>
+
+      <div class="program-grid">
+        <div class="program-card">
+          <h4>🔬 TechNova Lab</h4>
+          <p>Program penelitian dan inovasi sains & robotika untuk mengembangkan kreativitas siswa dalam bidang teknologi</p>
+          <p class="teacher">👨‍🏫 Pak Reza Mahendra</p>
+        </div>
+
+        <div class="program-card">
+          <h4>🌱 Green Project</h4>
+          <p>Penghijauan dan riset energi terbarukan di lingkungan sekolah untuk menciptakan lingkungan yang berkelanjutan</p>
+          <p class="teacher">👩‍🏫 Bu Rizka Anindya</p>
+        </div>
+
+        <div class="program-card">
+          <h4>🎨 Nova Creative Studio</h4>
+          <p>Studio desain digital, animasi, dan film pendek untuk mengasah kreativitas siswa di bidang multimedia</p>
+          <p class="teacher">👩‍🏫 Bu Melati Kartika</p>
+        </div>
+
+        <div class="program-card">
+          <h4>💼 Digital Entrepreneurship</h4>
+          <p>Program kewirausahaan berbasis teknologi digital untuk membekali siswa dengan jiwa entrepreneur</p>
+          <p class="teacher">👩‍🏫 Bu Dewi Pratiwi</p>
+        </div>
+
+        <div class="program-card">
+          <h4>🌍 English Innovation Week</h4>
+          <p>Ajang presentasi dan debat dalam bahasa Inggris untuk meningkatkan kemampuan komunikasi global</p>
+          <p class="teacher">👩‍🏫 Bu Lina Hartono</p>
+        </div>
+
+        <div class="program-card">
+          <h4>⚽ Nova Sports Club</h4>
+          <p>Pengembangan fisik dan mental melalui kegiatan olahraga yang terorganisir dan kompetitif</p>
+          <p class="teacher">👨‍🏫 Pak Rafli Gunawan</p>
+        </div>
+
+        <div class="program-card">
+          <h4>🤝 Technova Volunteer</h4>
+          <p>Program sosial siswa untuk masyarakat dalam rangka membangun kepedulian dan tanggung jawab sosial</p>
+          <p class="teacher">👨‍🏫 Pak Surya Nugraha</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- GURU PAGE -->
+    <div id="page-guru" class="page-content" style="display:none;">
+      <div class="hero">
+        <h2>👩‍🏫 Tenaga Pendidik dan Staf</h2>
+        <p>Tim profesional yang berdedikasi untuk pendidikan berkualitas</p>
+      </div>
+
+      <div class="image-gallery">
+        <div class="image-card">
+          <h3>Kepala Sekolah</h3>
+          <!-- DEVELOPER: Ganti src dengan path gambar Anda -->
+          <img src="34.jpeg" alt="Kepala Sekolah">
+          <p class="upload-text">Drs. Bima Adyatama</p>
+          <p style="color: #999; font-size: 14px;">Pemimpin Visioner Technova</p>
+        </div>
+
+        <div class="image-card">
+          <h3>Struktur Organisasi</h3>
+          <!-- DEVELOPER: Ganti src dengan path gambar Anda -->
+          <img src="Screenshot 2025-11-08 085652.png" alt="Struktur Organisasi">
+          <p class="upload-text">Bagan Organisasi Tenaga Pendidik</p>
+          <p style="color: #999; font-size: 14px;">SMA Technova</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <table>
+          <thead>
+            <tr>
+              <th>Jabatan</th>
+              <th>Nama</th>
+              <th>Keterangan</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Kepala Sekolah</td><td>Drs. Bima Adyatama</td><td>Pemimpin visioner Technova</td></tr>
+            <tr><td>Wakil Kepala Sekolah</td><td>Nur Lestari, M.Pd</td><td>Bidang kurikulum</td></tr>
+            <tr><td>Guru Fisika</td><td>Ari Widodo, S.Si</td><td>Peneliti muda energi terbarukan</td></tr>
+            <tr><td>Guru Kimia</td><td>Nadia Ramadhani, S.Pd</td><td>Spesialis kimia lingkungan</td></tr>
+            <tr><td>Guru Biologi</td><td>Rizka Anindya, M.Sc</td><td>Ahli bioteknologi</td></tr>
+            <tr><td>Guru Matematika</td><td>Dewi Pratiwi, S.Pd</td><td>Pembimbing olimpiade matematika</td></tr>
+            <tr><td>Guru Informatika</td><td>Reza Mahendra, S.Kom</td><td>Pengembang aplikasi edukasi</td></tr>
+            <tr><td>Guru Bahasa Inggris</td><td>Lina Hartono, S.Pd</td><td>TOEFL Trainer</td></tr>
+            <tr><td>Guru Bahasa Indonesia</td><td>Hendra Saputra, S.Pd</td><td>Penulis novel pendidikan</td></tr>
+            <tr><td>Guru PKN</td><td>Surya Nugraha, M.Pd</td><td>Pembimbing OSIS</td></tr>
+            <tr><td>Guru Seni</td><td>Melati Kartika, S.Sn</td><td>Desainer grafis profesional</td></tr>
+            <tr><td>Guru Penjas</td><td>Rafli Gunawan, S.Pd</td><td>Pelatih tim futsal sekolah</td></tr>
+            <tr><td>Guru Agama</td><td>Ust. Fadli Rahman, S.Ag</td><td>Pembimbing Rohis</td></tr>
+            <tr><td>Staf Tata Usaha</td><td>Rini Oktaviani</td><td>Administrasi umum</td></tr>
+            <tr><td>Teknisi Lab Komputer</td><td>Andra Sitorus</td><td>Ahli jaringan dan server sekolah</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- MURID PAGE -->
+    <div id="page-murid" class="page-content" style="display:none;">
+      <div class="hero">
+        <h2>🧑‍🎓 Data Murid</h2>
+        <p>100 Siswa terbagi dalam 3 Kelas</p>
+      </div>
+
+      <div class="card">
+        <table>
+          <thead>
+            <tr>
+              <th>Kelas</th>
+              <th>Jumlah Siswa</th>
+              <th>Nama Kelas</th>
+              <th>Wali Kelas</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>X-Tekno</td><td>34</td><td>Teknologi Dasar</td><td>Pak Reza Mahendra</td></tr>
+            <tr><td>XI-Innova</td><td>33</td><td>Inovasi & Desain</td><td>Bu Dewi Pratiwi</td></tr>
+            <tr><td>XII-Creative</td><td>33</td><td>Kreatif Digital</td><td>Bu Nadia Ramadhani</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="student-section">
+        <h3>👥 Daftar 100 Nama Siswa</h3>
+        
+        <h4>Kelas X-Tekno (34 siswa)</h4>
+        <ol>
+          <li>Alvino Pratama</li>
+          <li>Hana Salsabila</li>
+          <li>Dimas Haryanto</li>
+          <li>Fira Zahra</li>
+          <li>Rafi Akbar</li>
+          <li>Naila Putri</li>
+          <li>Bagas Wibowo</li>
+          <li>Kayla Indah</li>
+          <li>Zidan Ramadhan</li>
+          <li>Aditya Putra</li>
+          <li>Siti Humaira</li>
+          <li>Rayhan Fadhil</li>
+          <li>Aurel Nathania</li>
+          <li>Bintang Saputra</li>
+          <li>Dhea Amara</li>
+          <li>Aldi Prakoso</li>
+          <li>Livia Syafira</li>
+          <li>Yoga Pratomo</li>
+          <li>Keisha Maharani</li>
+          <li>Rendra Gunawan</li>
+          <li>Anisa Rahma</li>
+          <li>Ardan Prasetyo</li>
+          <li>Bella Anggraini</li>
+          <li>Rehan Rizky</li>
+          <li>Fadhila Nuraini</li>
+          <li>Ezra Mahesa</li>
+          <li>Indah Lestari</li>
+          <li>Riko Adnan</li>
+          <li>Shania Citra</li>
+          <li>Damar Firdaus</li>
+          <li>Kevin Ardiansyah</li>
+          <li>Aira Febriani</li>
+          <li>Jovan Krisna</li>
+          <li>Lia Melinda</li>
+        </ol>
+
+        <h4>Kelas XI-Innova (33 siswa)</h4>
+        <ol>
+          <li>Arga Permana</li>
+          <li>Vania Kusuma</li>
+          <li>Rizky Naufal</li>
+          <li>Clarissa Putri</li>
+          <li>Dion Prakoso</li>
+          <li>Rani Widya</li>
+          <li>Farel Adrian</li>
+          <li>Sheila Puspita</li>
+          <li>Johan Fathur</li>
+          <li>Nadine Arista</li>
+          <li>Galang Surya</li>
+          <li>Rena Oktavia</li>
+          <li>Arvin Mahendra</li>
+          <li>Zahra Anindya</li>
+          <li>Farhan Akmal</li>
+          <li>Cindy Alia</li>
+          <li>Haikal Aditya</li>
+          <li>Felicia Rani</li>
+          <li>Arfan Rasyid</li>
+          <li>Citra Ayu</li>
+          <li>Danang Saputra</li>
+          <li>Luthfia Rahmadani</li>
+          <li>Raditya Bayu</li>
+          <li>Ayu Kartika</li>
+          <li>Samuel Yudha</li>
+          <li>Putri Dewanti</li>
+          <li>Bayu Adnan</li>
+          <li>Rhea Nurhaliza</li>
+          <li>Hafizh Ramzi</li>
+          <li>Intan Safira</li>
+          <li>Rafi Nurul</li>
+          <li>Bella Oktaviana</li>
+          <li>Dinda Maulani</li>
+        </ol>
+
+        <h4>Kelas XII-Creative (33 siswa)</h4>
+        <ol>
+          <li>Andi Faturrahman</li>
+          <li>Nisa Aulia</li>
+          <li>Reno Baskara</li>
+          <li>Tiara Melati</li>
+          <li>Rangga Pratama</li>
+          <li>Fina Marlina</li>
+          <li>Gilang Nurcahyo</li>
+          <li>Karin Lestari</li>
+          <li>Miko Setiawan</li>
+          <li>Tania Rahmi</li>
+          <li>Fikri Ananta</li>
+          <li>Zahira Fauziah</li>
+          <li>Alvaro Darma</li>
+          <li>Sella Agustin</li>
+          <li>Ridho Pramana</li>
+          <li>Cindy Anggraeni</li>
+          <li>Akbar Rizqi</li>
+          <li>Ayunda Putri</li>
+          <li>Devano Prakoso</li>
+          <li>Nia Anjani</li>
+          <li>Rehan Yudha</li>
+          <li>Talia Meutia</li>
+          <li>Haris Nugroho</li>
+          <li>Della Rahayu</li>
+          <li>Ezra Firmansyah</li>
+          <li>Naufal Haidar</li>
+          <li>Silvia Natalia</li>
+          <li>Radit Ardana</li>
+          <li>Elvina Nuraini</li>
+          <li>Aril Prakoso</li>
+          <li>Felin Maretha</li>
+          <li>Danu Saputro</li>
+          <li>Viera Nandita</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- TABEL PAGE -->
+    <div id="page-tabel" class="page-content" style="display:none;">
+      <div class="hero">
+        <h2>📊 Tabel Ringkasan</h2>
+        <p>Data lengkap SMA Technova</p>
+      </div>
+
+      <div class="summary-table">
+        <table>
+          <tbody>
+            <tr><th>Aspek</th><th>Keterangan</th></tr>
+            <tr><td>Nama Sekolah</td><td>SMA Technova</td></tr>
+            <tr><td>Berdiri Tahun</td><td>2012</td></tr>
+            <tr><td>Jumlah Guru & Staf</td><td>15</td></tr>
+            <tr><td>Jumlah Siswa</td><td>100</td></tr>
+            <tr><td>Jumlah Kelas</td><td>3</td></tr>
+            <tr><td>Akreditasi</td><td>A</td></tr>
+            <tr><td>Lokasi</td><td>Kota Futurea, Indonesia</td></tr>
+            <tr><td>Motto</td><td>"Innovate, Create, Inspire."</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 SMA Technova</p>
+    <p class="motto">"Innovate, Create, Inspire."</p>
+  </footer>
+
+  <script>
+    // Hide loading screen after page loads
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        document.getElementById('loading-screen').classList.add('hidden');
+      }, 1000);
+    });
+
+    // Toggle Mobile Menu
+    function toggleMenu() {
+      const nav = document.getElementById('nav-menu');
+      const hamburger = document.querySelector('.hamburger');
+      nav.classList.toggle('active');
+      hamburger.classList.toggle('active');
+    }
+
+    function showPage(pageName) {
+      // Hide all pages
+      const pages = document.querySelectorAll('.page-content');
+      pages.forEach(page => page.style.display = 'none');
+      
+      // Show selected page
+      document.getElementById('page-' + pageName).style.display = 'block';
+      
+      // Update active nav link
+      const navLinks = document.querySelectorAll('nav a');
+      navLinks.forEach(link => link.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      // Close mobile menu after clicking
+      const nav = document.getElementById('nav-menu');
+      const hamburger = document.querySelector('.hamburger');
+      if (nav.classList.contains('active')) {
+        nav.classList.remove('active');
+        hamburger.classList.remove('active');
+      }
+      
+      // Smooth scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>
